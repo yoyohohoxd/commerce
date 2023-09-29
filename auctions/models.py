@@ -7,7 +7,7 @@ class User(AbstractUser):
 
 class AuctionListings(models.Model):
     '''
-    First have the title, description, price, and a date of post.
+    First have the title, description and price.
 
     '''
     title = models.CharField(max_length=64)
