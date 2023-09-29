@@ -3,8 +3,14 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
+from .models import AuctionListings
 
 from .models import User
+
+
+class Input_Form(forms.Form):
+    input_field = forms.CharField()
 
 
 def index(request):
@@ -61,3 +67,14 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def create_listing(request):
+
+
+
+
+    return render(request, "auctions/create_listing.html", {
+        "input_field": Input_Form(),
+        "auction_listings": AuctionListings.objects.all()
+    })
