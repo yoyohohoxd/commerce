@@ -4,17 +4,23 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+
+#Import class AuctionListings to use it I think
 from .models import AuctionListings
 
 from .models import User
 
 
-class Input_Form(forms.Form):
-    input_field = forms.CharField()
+class NewArticleForm(forms.Form):
+    title = forms.CharField(label="", widget=forms.TextInput(attrs={'placeholder': 'Enter a title'}))
+    description = forms.CharField(label="", widget=forms.Textarea)
+    price = forms.IntegerField(label="", widget=forms.TextInput(attrs={'placeholder': 'Enter the starting bid'}))
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "auction_listings": AuctionListings.objects.all()
+    })
 
 
 def login_view(request):
@@ -71,10 +77,12 @@ def register(request):
 
 def create_listing(request):
 
-
-
+    if request.method == "POST":
+        new_article = NewArticleForm(request.POST)
+        if new_article.is_valid():
+            AuctionListings(title = new_article.cleaned_data["title"], description = new_article.cleaned_data["description"], price = new_article.cleaned_data["price"]).save()
+            
 
     return render(request, "auctions/create_listing.html", {
-        "input_field": Input_Form(),
-        "auction_listings": AuctionListings.objects.all()
+        "input_field": NewArticleForm()
     })

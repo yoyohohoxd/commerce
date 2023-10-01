@@ -22,9 +22,9 @@
             </li>
             <li>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'create_listing' %}">Create Listing</a>
+                    <a class="nav-link" href="{% url 'create_listing' %}">Create Listing</a>
                 {% else %}
-                    <a href="{% url 'login' %}">Create Listing</a>
+                    <a class="nav-link" href="{% url 'login' %}">Create Listing</a>
                 {% endif %}
             </li>
             {% if user.is_authenticated %}
