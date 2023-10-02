@@ -6,7 +6,14 @@
     <div>
         <ul>
             {% for listing in auction_listings %}
-                <li>Listing title: {{ listing.title }}. {{ listing.description }}. The price is {{ listing.price }}.<br>Posted {{ listing.date_of_post }}</li>
+                <li>
+                    Listing title: {{ listing.title }}. {{ listing.description }}. The price is {{ listing.price }}.
+                    <br>Posted {{ listing.date_of_post }}
+                </li>
+                    {% if listing.url_picture %}
+                        <img src="{{ listing.url_picture }}" alt="Listing Picture">
+                    {% endif %}
+                    <div>Category: {{ listing.category }}</div>
             {% empty %}
                 <li>No listings</li>
             {% endfor %}

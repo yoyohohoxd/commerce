@@ -8,7 +8,14 @@
         {% csrf_token %}
         <div class="form-group">
             {{ input_field.as_div }}
-            <input type="submit" value="Submit new listing" class="btn btn-primary mb-2">
+            <select name="category" id="">
+               {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <div>
+                <input type="submit" value="Submit new listing" class="btn btn-primary mb-2">
+            </div>
         </div>
     </form>    
 
