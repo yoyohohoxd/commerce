@@ -5,20 +5,12 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-#Import class AuctionListings to use it I think
-from .models import AuctionListings
-
 from .models import User
 
+#Import class AuctionListings to use it I think
+from .models import AuctionListings
+from .forms import NewListingForm
 
-class NewArticleForm(forms.Form):
-    title = forms.CharField(label="", widget=forms.TextInput(attrs={'placeholder': 'Enter a title'}))
-    description = forms.CharField(label="", widget=forms.Textarea)
-    price = forms.IntegerField(label="", widget=forms.TextInput(attrs={'placeholder': 'Enter the starting bid'}))
-    url_picture = forms.CharField(label="", required=False, widget=forms.TextInput(attrs={'placeholder': 'Optional URL for picture'}))
-    
-
-categories = ["", "Furniture", "Computer", "Computer Accessories", "Toys", "Garden Utilities"]
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -79,19 +71,13 @@ def register(request):
 
 
 def create_listing(request):
-
     if request.method == "POST":
-        new_article = NewArticleForm(request.POST)
-        if new_article.is_valid():
-            AuctionListings(title = new_article.cleaned_data["title"], 
-                            description = new_article.cleaned_data["description"], 
-                            price = new_article.cleaned_data["price"],
-                            url_picture = new_article.cleaned_data["url_picture"],
-                            category = request.POST["category"] #FIX THIS LATER BY ADDING CATEGORY TO THE FORM
-                            ).save()
-            
-
-    return render(request, "auctions/create_listing.html", {
-        "input_field": NewArticleForm(),
-        "categories": categories
-    })
+        formset = NewListingForm(request.POST)
+        if formset.is_valid():
+            formset.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        formset = NewListingForm()
+        return render(request, "auctions/create_listing.html", {
+            "formset": formset
+        })

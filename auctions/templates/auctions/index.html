@@ -13,7 +13,7 @@
                     {% if listing.url_picture %}
                         <img src="{{ listing.url_picture }}" alt="Listing Picture">
                     {% endif %}
-                    <div>Category: {{ listing.category }}</div>
+                    <div>Category: {{ listing.get_category_display }}</div>
             {% empty %}
                 <li>No listings</li>
             {% endfor %}
