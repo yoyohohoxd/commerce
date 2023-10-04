@@ -72,6 +72,8 @@ def register(request):
 
 def create_listing(request):
     if request.method == "POST":
+        
+        # 'formset' is created from NewAuctionListing(), which is a class .forms which is derived from the Models
         formset = NewListingForm(request.POST)
         if formset.is_valid():
             formset.save()
@@ -81,3 +83,10 @@ def create_listing(request):
         return render(request, "auctions/create_listing.html", {
             "formset": formset
         })
+    
+
+def listing(request, listing_id):
+    listing = AuctionListings.objects.get(id=listing_id)
+    return render(request, "auctions/listing.html", {
+        "listing": listing
+    })
