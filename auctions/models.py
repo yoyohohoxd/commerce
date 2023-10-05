@@ -29,7 +29,7 @@ class AuctionListings(models.Model):
     ]
 
     title = models.CharField(max_length=64)
-    description = models.CharField(max_length=254)
+    description = models.TextField(max_length=1000)
     price = models.IntegerField()
     date_of_post = models.DateTimeField(auto_now_add=True)
     url_picture = models.CharField(max_length=500)

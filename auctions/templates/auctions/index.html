@@ -7,21 +7,23 @@
     <div class="container">
         <div class="row row-cols-2">
             {% for listing in auction_listings %}
-                <div class="card mb-3" style="max-width: 540px;">
-                    <div class="row no-gutters">
-                        <div class="col-md-4">
-                            <img src="{{ listing.url_picture }}" class="card-img m-2" alt="...">
-                        </div>
-                        <div class="col-md-8">
-                        <div class="card-body">
-                        <a href="{% url 'listing' listing.id %}"><h5 class="card-title">{{ listing.title }}</h5></a>
-                        <p class="card-text">{{ listing.description }}</p>
-                        <p class="card-text"><small class="text-muted">{{ listing.get_category_display }}</small></p>
-                        <p class="card-text"><small class="text-muted">{{ listing.date_of_post }}</small></p>
+                <a href="{% url 'listing' listing.id %}" class="text-reset text-decoration-none">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{{ listing.url_picture }}" class="card-img m-2" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ listing.title }}<br><small class="text-muted">$ {{ listing.price }}</small></h5>
+                                    <p class="card-text">{{ listing.description }}</p>
+                                    <p class="card-text"><small class="text-muted">{{ listing.get_category_display }}</small></p>
+                                    <p class="card-text"><small class="text-muted">{{ listing.date_of_post }}</small></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </div>

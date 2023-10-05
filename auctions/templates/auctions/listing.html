@@ -2,7 +2,17 @@
 
 {% block body %}
 
-    <h2>{{ listing.title }}</h2>
+    
+
+    <div class="container">
+        <h1>{{ listing.get_category_display }}, {{ listing.title }}</h1>
+        <h1><small class="text-muted">${{ listing.price }}</small></h1>
+        <div class="img-max">
+            <img style="max-height: 500px;" src="{{ listing.url_picture }}" alt="Listing Image for {{ listing.title }}" class="img-fluid">
+        </div>
+        <p class="mt-5">{{ listing.description }}</p>
+        <p>Listing posted: {{ listing.date_of_post }}</p>
+    </div>
 
     
 

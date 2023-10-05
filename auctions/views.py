@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -69,11 +70,12 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-
+@login_required(login_url='/login')
 def create_listing(request):
     if request.method == "POST":
         
-        # 'formset' is created from NewAuctionListing(), which is a class .forms which is derived from the Models
+        # 'formset' is created from NewAuctionListing(), which is a class 
+        # .forms which is derived from the Models
         formset = NewListingForm(request.POST)
         if formset.is_valid():
             formset.save()
