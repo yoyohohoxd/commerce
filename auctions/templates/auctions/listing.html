@@ -1,19 +1,28 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
-    
-
     <div class="container">
-        <h1>{{ listing.get_category_display }}, {{ listing.title }}</h1>
-        <h1><small class="text-muted">${{ listing.price }}</small></h1>
-        <div class="img-max">
-            <img style="max-height: 500px;" src="{{ listing.url_picture }}" alt="Listing Image for {{ listing.title }}" class="img-fluid">
+        <div class="row">
+            <div class="col-8">
+                <h1>{{ listing.get_category_display }}, {{ listing.title }}</h1>
+                <h1><small class="text-muted">${{ listing.price }}</small></h1>
+                <div class="img-max">
+                    <img style="max-height: 500px;" src="{{ listing.url_picture }}" alt="Listing Image for {{ listing.title }}" class="img-fluid">
+                </div>
+                <p class="mt-5">{{ listing.description }}</p>
+                <p>Posted by: {{ listing.user }}, {{ listing.date_of_post }}</p>
+            </div>
+
+
+            <div class="col-4">
+                <form action="{% url 'listing' listing.id %}" method="post">
+                {% csrf_token %}
+                    {%  %}
+                    <button type="submit" value="Add to Watchlist" class="btn btn-link">Add To Watchlist</button>
+                </form>
+            </div>
+
+
         </div>
-        <p class="mt-5">{{ listing.description }}</p>
-        <p>Listing posted: {{ listing.date_of_post }}</p>
     </div>
-
-    
-
 {% endblock %}

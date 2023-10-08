@@ -9,11 +9,15 @@ from django import forms
 from .models import User
 
 #Import class AuctionListings to use it I think
+from .models import User
 from .models import AuctionListings
 from .forms import NewListingForm
 
 
 def index(request):
+
+    print(AuctionListings.objects.all())
+
     return render(request, "auctions/index.html", {
         "auction_listings": AuctionListings.objects.all()
     })
@@ -70,15 +74,23 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+# Requires login - if not then get redirected to login page
 @login_required(login_url='/login')
 def create_listing(request):
     if request.method == "POST":
         
-        # 'formset' is created from NewAuctionListing(), which is a class 
-        # .forms which is derived from the Models
+        # Create a form instance with POST data
         formset = NewListingForm(request.POST)
         if formset.is_valid():
-            formset.save()
+
+            # Create, but don't save the new AuctionListing --> NewListingForm instance
+            instance = formset.save(commit=False)
+
+            # Assign this instance of the formset with the user id, since it isn't declared in the form 
+            instance.user = request.user
+
+            # Actually save the instance
+            instance.save()
         return HttpResponseRedirect(reverse("index"))
     else:
         formset = NewListingForm()
@@ -88,7 +100,21 @@ def create_listing(request):
     
 
 def listing(request, listing_id):
+
+    if request.method == "POST":
+        user = request.user
+        
+    
     listing = AuctionListings.objects.get(id=listing_id)
     return render(request, "auctions/listing.html", {
+        "user": user,
         "listing": listing
+    })
+
+def watchlist(request, user):
+
+    user = User.objects.get(username=user)
+
+    return render(request, "auctions/watchlist.html", {
+        "user": user
     })

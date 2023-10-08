@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    watchlist = models.Field()
 
 class AuctionListings(models.Model):
     '''
@@ -34,6 +34,7 @@ class AuctionListings(models.Model):
     date_of_post = models.DateTimeField(auto_now_add=True)
     url_picture = models.CharField(max_length=500)
     category = models.CharField(max_length=100, choices=CATEGORIES, default=NO_CATEGORY)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
 
     def __str__(self):
         return f"Title: {self.title} - Price: {self.price} - Description: {self.description} - Date: {self.date_of_post} - Category: {self.category}"
