@@ -3,7 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    watchlist = models.Field()
+    listing = models.ManyToManyField("AuctionListings", blank=True, related_name="users")
+
+    def __str__(self):
+        return f"{self.username}"
 
 class AuctionListings(models.Model):
     '''

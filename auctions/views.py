@@ -101,8 +101,8 @@ def create_listing(request):
 
 def listing(request, listing_id):
 
-    if request.method == "POST":
-        user = request.user
+
+    user = request.user
         
     
     listing = AuctionListings.objects.get(id=listing_id)
