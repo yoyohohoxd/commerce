@@ -17,8 +17,11 @@
             <div class="col-4">
                 <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
-                    
-                    <button type="submit" value="Add to Watchlist" class="btn btn-link">Add To Watchlist</button>
+                    {% if can_add %}
+                        <button type="submit" value="Add to Watchlist" class="btn btn-link">Add To Watchlist</button>
+                    {% else %}
+                        <button type="submit" value="Remove from Watchlist" class="btn btn-link">Remove From Watchlist</button>
+                    {% endif %}
                 </form>
             </div>
 
