@@ -99,26 +99,32 @@ def create_listing(request):
 
 def listing(request, listing_id):
 
-
-
     # Get currently logged in user
     user = request.user
     user_id = user.id
 
+    watcher = User.objects.get(id=user_id)
+    #print(f"USER ({user.username}): {watcher.listing.all()}")
+
     # Gets listing on current page
     listing = AuctionListings.objects.get(id=listing_id)
-
+    
     # Goes through the AuctionListing objects with a filter that checks 'users' (related_name) in User class
+    # If no match is found "watched" will be empty and will return False when called below with .exists()
     watched = AuctionListings.objects.filter(users=user_id, id=listing_id).values()
 
     if request.method == "POST":
         if watched.exists():
-            
-    
+            listing.users.remove(watcher)
+        else:
+            listing.users.add(watcher)
+        
+    #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
+
     return render(request, "auctions/listing.html", {
         "user": user,
         "listing": listing,
-        "can_add": watched.exists()# If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
+        "is_watching": watched.exists()# If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
     })
 
 def watchlist(request, user):

@@ -17,7 +17,7 @@
             <div class="col-4">
                 <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
-                    {% if can_add %}
+                    {% if not is_watching %}
                         <button type="submit" value="Add to Watchlist" class="btn btn-link">Add To Watchlist</button>
                     {% else %}
                         <button type="submit" value="Remove from Watchlist" class="btn btn-link">Remove From Watchlist</button>
