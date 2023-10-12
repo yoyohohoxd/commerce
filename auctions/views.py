@@ -8,16 +8,16 @@ from django import forms
 
 from .models import User
 
-#Import class AuctionListings to use it I think
+#Import class Listing to use it I think
 from .models import User
-from .models import AuctionListings
+from .models import Listing
 from .forms import NewListingForm
 
 
 def index(request):
 
     return render(request, "auctions/index.html", {
-        "auction_listings": AuctionListings.objects.all()
+        "auction_listings": Listing.objects.all()
     })
 
 
@@ -103,15 +103,16 @@ def listing(request, listing_id):
     user = request.user
     user_id = user.id
 
+    # Gets current user
     watcher = User.objects.get(id=user_id)
     #print(f"USER ({user.username}): {watcher.listing.all()}")
 
     # Gets listing on current page
-    listing = AuctionListings.objects.get(id=listing_id)
+    listing = Listing.objects.get(id=listing_id)
     
     # Goes through the AuctionListing objects with a filter that checks 'users' (related_name) in User class
     # If no match is found "watched" will be empty and will return False when called below with .exists()
-    watched = AuctionListings.objects.filter(users=user_id, id=listing_id).values()
+    watched = Listing.objects.filter(users=user_id, id=listing_id).values()
 
     if request.method == "POST":
         if watched.exists():
@@ -127,10 +128,16 @@ def listing(request, listing_id):
         "is_watching": watched.exists()# If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
     })
 
-def watchlist(request, user):
+def watchlist(request):
 
-    user = User.objects.get(username=user)
+    user = request.user
+
+    instance = User.objects.get(id=user.id)
+
+    # Get the listings title
+    watchlist_for_user = instance.listing.all().values("id", "title")
 
     return render(request, "auctions/watchlist.html", {
-        "user": user
+        "user": user,
+        "watchlist": watchlist_for_user
     })

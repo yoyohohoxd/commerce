@@ -1,11 +1,12 @@
 from django.forms import ModelForm
 from django import forms
-from .models import AuctionListings
+from .models import Listing
 
 class NewListingForm(ModelForm):
 
+    # Overwrite the "url_picture" from the model to apply a parameter
     url_picture = forms.CharField(required=False)
 
     class Meta:
-        model = AuctionListings
+        model = Listing
         fields = ['title', 'description', 'price', 'url_picture', 'category']

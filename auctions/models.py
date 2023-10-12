@@ -3,7 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    listing = models.ManyToManyField("AuctionListings", blank=True, related_name="users")
+    listing = models.ManyToManyField("Listing", blank=True, related_name="users")
+    bid = models.ManyToManyField("Bid", blank=True, related_name="bids")
 
     def __str__(self):
         return f"{self.username}"
@@ -11,7 +12,7 @@ class User(AbstractUser):
     def printUser(self):
         return f"{self.username}"
 
-class AuctionListings(models.Model):
+class Listing(models.Model):
     '''
     Class for all auction listings. Also provides basis for the Model Forms.
     Class contains: "title", "description", "price", "date_of_post", "url_picture", and finally "categories".
@@ -45,9 +46,9 @@ class AuctionListings(models.Model):
     def __str__(self):
         return f"Title: {self.title} - Price: {self.price} - Description: {self.description} - Date: {self.date_of_post} - Category: {self.category}"
 
-class Bids(models.Model):
+class Bid(models.Model):
     bid = models.IntegerField()
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     comment = models.CharField(max_length=1000)

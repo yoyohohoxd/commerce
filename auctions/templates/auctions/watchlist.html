@@ -2,11 +2,20 @@
 
 {% block body %}
 
+<div class="container-fluid">
     <div class="container">
-        <h1>Watchlist for {{ user.username }}</h1>
-        <ul>
-            <li></li>
-        </ul>
+        <h1 class="mb-3">Watchlist for {{ user.username }}</h1>
     </div>
-
+    <div class="container">
+        {% for listing in watchlist %}
+            <ul>
+                <li>
+                    <a class="font-weight-normal" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+                </li>
+            </ul>
+        {% empty %}
+            <p>No listings have been wishlisted by you yet</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
