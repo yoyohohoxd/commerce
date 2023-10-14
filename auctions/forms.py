@@ -4,7 +4,7 @@ from .models import Listing
 
 class NewListingForm(ModelForm):
 
-    # Overwrite the "url_picture" from the model to apply a parameter
+    # Overwrite the "url_picture" from the model to apply "required"-parameter
     url_picture = forms.CharField(required=False)
 
     class Meta:

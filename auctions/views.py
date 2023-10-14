@@ -9,8 +9,7 @@ from django import forms
 from .models import User
 
 #Import class Listing to use it I think
-from .models import User
-from .models import Listing
+from .models import User, Listing, Bid, Comment
 from .forms import NewListingForm
 
 
@@ -106,26 +105,56 @@ def listing(request, listing_id):
     # Gets current user
     watcher = User.objects.get(id=user_id)
     #print(f"USER ({user.username}): {watcher.listing.all()}")
+    print(f"DIFFERENCE BETWEEN {type(user)} ---- AND ---- {type(watcher)}")
 
-    # Gets listing on current page
+    # Gets id of currently visited listing
     listing = Listing.objects.get(id=listing_id)
     
     # Goes through the AuctionListing objects with a filter that checks 'users' (related_name) in User class
     # If no match is found "watched" will be empty and will return False when called below with .exists()
     watched = Listing.objects.filter(users=user_id, id=listing_id).values()
 
+    # Get current highest bid on listing
+    highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
+
+    # Check name of button to make sure right instructions are given
     if request.method == "POST":
-        if watched.exists():
-            listing.users.remove(watcher)
-        else:
-            listing.users.add(watcher)
-        
+        if "watchlist" in request.POST:
+            print("watchlist btn")  
+            if watched.exists():
+                listing.users.remove(watcher)
+            else:
+                listing.users.add(watcher)
+        elif "submit_bid" in request.POST:
+
+            # Get current bid from page and convert to int
+            current_bid = int(request.POST["bid"])
+
+            # Bid made must be higher than or equal to the current price and currently highest bid
+            if current_bid >= listing.price and current_bid > highest_bid.bid:
+                Bid.objects.create(bid=current_bid, user=watcher, listing=listing)
+
+                # Get new highest bid so that the website is updated by next return
+                highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
+            else:
+                offer_declined = True # Is there another way to check this?
+                print("Offer wasnt high enough") # Would be cool to turn this into a popup
+                return render(request, "auctions/listing.html", {
+                    "user": user,
+                    "listing": listing,
+                    "is_watching": watched.exists(),
+                    "offer_declined": offer_declined,
+                    "highest_bid": highest_bid.bid
+                })
+            
+            
     #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
 
     return render(request, "auctions/listing.html", {
         "user": user,
         "listing": listing,
-        "is_watching": watched.exists()# If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
+        "is_watching": watched.exists(), # If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
+        "highest_bid": highest_bid.bid
     })
 
 def watchlist(request):

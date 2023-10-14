@@ -6,9 +6,12 @@
 
     <form action="{% url 'create_listing' %}" method="post">
         {% csrf_token %}
-        <div>
-            {{ formset.as_div }}
-        </div>
+        {% for form in formset %} 
+            <div class="form-group">
+                <label for="id_{{ form.name }}">{{form.name|capfirst}}</label> 
+                <div class="">{{ form }}</div>
+            </div>
+        {% endfor %}
         <div>
             <input type="submit" value="Submit new listing" class="btn btn-primary mb-2">
         </div>

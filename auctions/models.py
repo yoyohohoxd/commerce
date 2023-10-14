@@ -4,12 +4,8 @@ from django.db import models
 
 class User(AbstractUser):
     listing = models.ManyToManyField("Listing", blank=True, related_name="users")
-    bid = models.ManyToManyField("Bid", blank=True, related_name="bids")
 
     def __str__(self):
-        return f"{self.username}"
-    
-    def printUser(self):
         return f"{self.username}"
 
 class Listing(models.Model):
@@ -48,6 +44,11 @@ class Listing(models.Model):
 
 class Bid(models.Model):
     bid = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listings", default=1)
+
+    def __str__(self):
+        return f"User: {self.user} made a bid of {self.bid} on {self.listing.title}"
 
 
 class Comment(models.Model):
