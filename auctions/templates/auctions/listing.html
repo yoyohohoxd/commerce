@@ -23,7 +23,6 @@
 
 
             <div class="col-4">
-                
                 <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
                 {% if not is_watching %}
@@ -32,7 +31,7 @@
                     <button type="submit" value="Remove from Watchlist" class="btn btn-link" name="watchlist">Remove From Watchlist</button>
                 {% endif %}
                 </form>
-            
+
                 {% if offer_declined is not None %}
                     <div class="alert alert-danger" role="alert">
                          Offer must be higher than current highest offer!
@@ -47,10 +46,34 @@
                         <button class="btn btn-primary mb-2" style="margin-left: 5px;" type="submit" name="submit_bid">Submit Bid</button>
                     </div>
                 </form>
-            
             </div>
-
-
         </div>
+    </div>
+
+    <div class="container">
+        <h2>
+            <small class="text-muted">Comments</small>
+        </h2>    
+        <div class="media">
+            
+            <div class="media-body">
+                {% for comment in comments %}
+                    <h5 class="mt-2">User {{ comment.user }} said:</h5>
+                    {{ comment.comment }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-group">
+            <form action="{% url 'listing' listing.id %}" method="post">
+                {% csrf_token %}
+                {{ formset }}
+                <div>
+                    <button class="btn btn-primary mb-2" type="submit" name="submit_comment">Submit Comment</button>
+                </div>
+            </form>
+        </div>  
     </div>
 {% endblock %}

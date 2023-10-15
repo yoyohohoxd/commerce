@@ -10,7 +10,7 @@ from .models import User
 
 #Import class Listing to use it I think
 from .models import User, Listing, Bid, Comment
-from .forms import NewListingForm
+from .forms import NewListingForm, CommentsForm
 
 
 def index(request):
@@ -80,7 +80,7 @@ def create_listing(request):
         formset = NewListingForm(request.POST)
         if formset.is_valid():
 
-            # Create, but don't save the new AuctionListing --> NewListingForm instance
+            # Create, but don't save the new Listing --> NewListingForm instance
             instance = formset.save(commit=False)
 
             # Assign this instance of the formset with the user id, since it isn't declared in the form 
@@ -105,7 +105,6 @@ def listing(request, listing_id):
     # Gets current user
     watcher = User.objects.get(id=user_id)
     #print(f"USER ({user.username}): {watcher.listing.all()}")
-    print(f"DIFFERENCE BETWEEN {type(user)} ---- AND ---- {type(watcher)}")
 
     # Gets id of currently visited listing
     listing = Listing.objects.get(id=listing_id)
@@ -117,14 +116,24 @@ def listing(request, listing_id):
     # Get current highest bid on listing
     highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
 
-    # Check name of button to make sure right instructions are given
+    # Initialize CommentsForm
+    formset = CommentsForm()
+
+    # Gets all comments on this listing
+    comments = Comment.objects.filter(listing=listing_id)
+    print(comments)
+
+    # Check name of button from HTML to make sure right instructions are given
     if request.method == "POST":
-        if "watchlist" in request.POST:
-            print("watchlist btn")  
+
+        # If user clicks the add/remove watchlist
+        if "watchlist" in request.POST:  
             if watched.exists():
                 listing.users.remove(watcher)
             else:
                 listing.users.add(watcher)
+
+        # If user submits a bid
         elif "submit_bid" in request.POST:
 
             # Get current bid from page and convert to int
@@ -138,23 +147,44 @@ def listing(request, listing_id):
                 highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
             else:
                 offer_declined = True # Is there another way to check this?
-                print("Offer wasnt high enough") # Would be cool to turn this into a popup
+                # Would be cool to turn this into a popup
                 return render(request, "auctions/listing.html", {
                     "user": user,
                     "listing": listing,
                     "is_watching": watched.exists(),
                     "offer_declined": offer_declined,
-                    "highest_bid": highest_bid.bid
+                    "highest_bid": highest_bid.bid,
+                    "formset": formset,
+                    "comments": comments
                 })
             
-            
-    #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
+        # If user submits a comment
+        elif "submit_comment" in request.POST:
 
+            formset = CommentsForm(request.POST)
+
+            if formset.is_valid():
+
+                comment = formset.cleaned_data
+                comment = comment.get('comment')
+                Comment.objects.create(comment=comment, user=watcher, listing=listing)
+
+            return render(request, "auctions/listing.html", {
+                    "user": user,
+                    "listing": listing,
+                    "is_watching": watched.exists(),
+                    "highest_bid": highest_bid.bid,
+                    "formset": formset,
+                    "comments": comments
+            })
+    #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
     return render(request, "auctions/listing.html", {
         "user": user,
         "listing": listing,
         "is_watching": watched.exists(), # If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
-        "highest_bid": highest_bid.bid
+        "highest_bid": highest_bid.bid,
+        "formset": formset,
+        "comments": comments
     })
 
 def watchlist(request):
