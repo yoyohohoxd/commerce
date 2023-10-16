@@ -98,21 +98,9 @@ def create_listing(request):
 
 def listing(request, listing_id):
 
-    # Get currently logged in user
-    user = request.user
-    user_id = user.id
-
-    # Gets current user
-    watcher = User.objects.get(id=user_id)
-    #print(f"USER ({user.username}): {watcher.listing.all()}")
-
     # Gets id of currently visited listing
     listing = Listing.objects.get(id=listing_id)
     
-    # Goes through the AuctionListing objects with a filter that checks 'users' (related_name) in User class
-    # If no match is found "watched" will be empty and will return False when called below with .exists()
-    watched = Listing.objects.filter(users=user_id, id=listing_id).values()
-
     # Get current highest bid on listing
     highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
 
@@ -125,6 +113,18 @@ def listing(request, listing_id):
 
     # Check name of button from HTML to make sure right instructions are given
     if request.method == "POST":
+
+        # Get currently logged in user
+        user = request.user
+        user_id = user.id
+
+        # Gets current user
+        watcher = User.objects.get(id=user_id)
+        #print(f"USER ({user.username}): {watcher.listing.all()}")
+
+        # Goes through the AuctionListing objects with a filter that checks 'users' (related_name) in User class
+        # If no match is found "watched" will be empty and will return False when called below with .exists()
+        watched = Listing.objects.filter(users=user_id, id=listing_id).values()
 
         # If user clicks the add/remove watchlist
         if "watchlist" in request.POST:  
@@ -177,11 +177,11 @@ def listing(request, listing_id):
                     "formset": formset,
                     "comments": comments
             })
+        
+
     #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
     return render(request, "auctions/listing.html", {
-        "user": user,
         "listing": listing,
-        "is_watching": watched.exists(), # If watched returns an object then the user has already added the listing to the watchlist and should not be able to do so again thus False
         "highest_bid": highest_bid.bid,
         "formset": formset,
         "comments": comments

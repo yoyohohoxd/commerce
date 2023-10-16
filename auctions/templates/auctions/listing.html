@@ -21,31 +21,37 @@
                 <p>Posted by: {{ listing.user }}, {{ listing.date_of_post }}</p>
             </div>
 
-
             <div class="col-4">
-                <form action="{% url 'listing' listing.id %}" method="post">
-                {% csrf_token %}
-                {% if not is_watching %}
-                    <button type="submit" value="Add to Watchlist" class="btn btn-link" name="watchlist">Add To Watchlist</button>
-                {% else %}
-                    <button type="submit" value="Remove from Watchlist" class="btn btn-link" name="watchlist">Remove From Watchlist</button>
-                {% endif %}
-                </form>
-
-                {% if offer_declined is not None %}
-                    <div class="alert alert-danger" role="alert">
-                         Offer must be higher than current highest offer!
-                    </div>
-                {% endif %}
-                <form class="form-inline" action="{% url 'listing' listing.id %}" method="post">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">  
-                            <input class="form-control" type="number" name="bid">
+                    {% if not is_watching %}
+                        <button type="submit" value="Add to Watchlist" class="btn btn-link" name="watchlist">Add To Watchlist</button>
+                    {% else %}
+                        <button type="submit" value="Remove from Watchlist" class="btn btn-link" name="watchlist">Remove From Watchlist</button>
+                    {% endif %}
+                    </form>
+                    {% if offer_declined is not None %}
+                        <div class="alert alert-danger" role="alert">
+                            Offer must be higher than current highest offer!
                         </div>
-                        <button class="btn btn-primary mb-2" style="margin-left: 5px;" type="submit" name="submit_bid">Submit Bid</button>
-                    </div>
-                </form>
+                    {% endif %}
+                    <form class="form-inline" action="{% url 'listing' listing.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">  
+                                <input class="form-control" type="number" name="bid">
+                            </div>
+                            <button class="btn btn-primary mb-2" style="margin-left: 5px;" type="submit" name="submit_bid">Submit Bid</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div>Please login to:</div>
+                    <ul>
+                        <li>Add "{{ listing.title }}" listing to your personal watchlist</li>
+                        <li>Make a bid on this listing</li>
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -64,16 +70,21 @@
             </div>
         </div>
     </div>
-
     <div class="container">
-        <div class="form-group">
-            <form action="{% url 'listing' listing.id %}" method="post">
-                {% csrf_token %}
-                {{ formset }}
-                <div>
-                    <button class="btn btn-primary mb-2" type="submit" name="submit_comment">Submit Comment</button>
-                </div>
-            </form>
-        </div>  
+        {% if user.is_authenticated %}
+            <div class="form-group">
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %}
+                    {{ formset }}
+                    <div>
+                        <button class="btn btn-primary mb-2" type="submit" name="submit_comment">Submit Comment</button>
+                    </div>
+                </form>
+            </div>  
+        {% else %}
+            <div>Please login to comment on this listing</div>
+        {% endif %}
     </div>
+
+        
 {% endblock %}
