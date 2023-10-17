@@ -8,7 +8,7 @@
                 <h1>
                 {% if highest_bid is not None %}
                     <small class="text-muted">Original Price: <s>${{ listing.price }}</s> - </small>
-                    <small class="text-muted">Highest Bid: ${{ highest_bid }}</small>
+                    <small class="text-muted">Highest Bid: ${{ highest_bid.bid }}</small>
                 {% else %}
                     <small class="text-muted">${{ listing.price }}</small>
                 {% endif %}
@@ -25,7 +25,7 @@
                 {% if user.is_authenticated %}
                     <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
-                    {% if not is_watching %}
+                    {% if is_watching == False %}
                         <button type="submit" value="Add to Watchlist" class="btn btn-link" name="watchlist">Add To Watchlist</button>
                     {% else %}
                         <button type="submit" value="Remove from Watchlist" class="btn btn-link" name="watchlist">Remove From Watchlist</button>
@@ -45,8 +45,11 @@
                             <button class="btn btn-primary mb-2" style="margin-left: 5px;" type="submit" name="submit_bid">Submit Bid</button>
                         </div>
                     </form>
+                    {% if listing.user_id == user_id %}
+                        <form action="{% url 'index' %}" method="post"></form>
+                    {% endif %}
                 {% else %}
-                    <div>Please login to:</div>
+                    <div class="mt-5">Please login to:</div>
                     <ul>
                         <li>Add "{{ listing.title }}" listing to your personal watchlist</li>
                         <li>Make a bid on this listing</li>

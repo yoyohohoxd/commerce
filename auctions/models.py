@@ -9,11 +9,6 @@ class User(AbstractUser):
         return f"{self.username}"
 
 class Listing(models.Model):
-    '''
-    Class for all auction listings. Also provides basis for the Model Forms.
-    Class contains: "title", "description", "price", "date_of_post", "url_picture", and finally "categories".
-
-    '''
 
     NO_CATEGORY = 'NO_CAT'
     FURNITURE = 'FUR'
@@ -40,7 +35,7 @@ class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
 
     def __str__(self):
-        return f"Title: {self.title} - Price: {self.price} - Description: {self.description} - Date: {self.date_of_post} - Category: {self.category}"
+        return f"Title: {self.title} - Price: {self.price} - Description: {self.description} - Date: {self.date_of_post} - Category: {self.category} - Posted by: {self.user_id}"
 
 class Bid(models.Model):
     bid = models.IntegerField()
