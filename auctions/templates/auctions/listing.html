@@ -2,6 +2,15 @@
 
 {% block body %}
     <div class="container">
+        {% if listing.active is False %}
+            {% if user_id == highest_bid.user_id %}
+                <div class="alert alert-success" role="alert">Congratulations! You have won the bid.</div>
+            {% elif listing.user_id == user_id %}
+                <div class="alert alert-warning" role="alert">You have closed this listing. The winner has been notified.</div>
+            {% elif user_id != highest_bid.user_id %}
+                <div class="alert alert-secondary" role="alert">This listing is unfortuantly closed.</div>
+            {% endif %}
+        {% endif %}
         <div class="row">
             <div class="col-8">
                 <h1>{{ listing.get_category_display }}, {{ listing.title }}</h1>
@@ -22,7 +31,7 @@
             </div>
 
             <div class="col-4">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and listing.active is True %}
                     <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
                     {% if is_watching == False %}
@@ -31,7 +40,7 @@
                         <button type="submit" value="Remove from Watchlist" class="btn btn-link" name="watchlist">Remove From Watchlist</button>
                     {% endif %}
                     </form>
-                    {% if offer_declined is not None %}
+                    {% if offer_declined is True %}
                         <div class="alert alert-danger" role="alert">
                             Offer must be higher than current highest offer!
                         </div>
@@ -46,8 +55,13 @@
                         </div>
                     </form>
                     {% if listing.user_id == user_id %}
-                        <form action="{% url 'index' %}" method="post"></form>
+                        <form action="{% url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-primary mb-2" type="submit" name="close_listing">Close Listing</button>
+                        </form>
                     {% endif %}
+                {% elif listing.active is False %}
+                    <div>This listing has been closed.</div>
                 {% else %}
                     <div class="mt-5">Please login to:</div>
                     <ul>
@@ -64,7 +78,6 @@
             <small class="text-muted">Comments</small>
         </h2>    
         <div class="media">
-            
             <div class="media-body">
                 {% for comment in comments %}
                     <h5 class="mt-2">User {{ comment.user }} said:</h5>
@@ -74,7 +87,7 @@
         </div>
     </div>
     <div class="container">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and listing.active is True %}
             <div class="form-group">
                 <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
@@ -83,9 +96,11 @@
                         <button class="btn btn-primary mb-2" type="submit" name="submit_comment">Submit Comment</button>
                     </div>
                 </form>
-            </div>  
+            </div> 
+        {% elif listing.active is False %}
+            <div>This listing has been closed.</div>
         {% else %}
-            <div>Please login to comment on this listing</div>
+            <div>Please login to comment on this listing.</div>
         {% endif %}
     </div>
 

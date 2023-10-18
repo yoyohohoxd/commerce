@@ -101,7 +101,6 @@ def listing(request, listing_id):
     # Get currently logged in user
     user = request.user
     user_id = user.id
-    #request.user.is_authenticated
 
     # Gets id of currently visited listing
     listing = Listing.objects.get(id=listing_id)
@@ -121,6 +120,9 @@ def listing(request, listing_id):
 
     # Check name of button from HTML to make sure right instructions are given
     if request.method == "POST":
+        
+        # A better way to check if offer is declined?
+        offer_declined = False
 
         # Gets current user
         current_user = User.objects.get(id=user_id)
@@ -143,53 +145,47 @@ def listing(request, listing_id):
             if current_bid >= listing.price and current_bid > highest_bid.bid:
                 Bid.objects.create(bid=current_bid, user=current_user, listing=listing)
 
-                # Get new highest bid so that the website is updated by next return
+                # Update highest bid so that the website is updated by next return
                 highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
             else:
                 offer_declined = True # Is there another way to check this?
                 # Would be cool to turn this into a popup
-                return render(request, "auctions/listing.html", {
-                    "user_id": int(user_id),
-                    "listing": listing,
-                    "is_watching": on_watchlist.exists(),
-                    "offer_declined": offer_declined,
-                    "highest_bid": highest_bid,
-                    "formset": formset,
-                    "comments": comments
-                })
-            
+
         # If user submits a comment
         elif "submit_comment" in request.POST:
-
             formset = CommentsForm(request.POST)
-
             if formset.is_valid():
-
                 comment = formset.cleaned_data
                 comment = comment.get('comment')
                 Comment.objects.create(comment=comment, user=current_user, listing=listing)
 
-            return render(request, "auctions/listing.html", {
-                    "user_id": int(user_id),
-                    "listing": listing,
-                    "is_watching": on_watchlist.exists(),
-                    "highest_bid": highest_bid,
-                    "formset": formset,
-                    "comments": comments
-            })
-        
+        # If user closes bid, highest bid wins
+        elif "close_listing" in request.POST:
+            instance = listing
+            instance.active = False
+            instance.save()
 
         
-
-    #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
-    return render(request, "auctions/listing.html", {
-        "user_id": int(user_id),
-        "listing": listing,
-        "is_watching": on_watchlist.exists(),
-        "highest_bid": highest_bid,
-        "formset": formset,
-        "comments": comments
-    })
+        return render(request, "auctions/listing.html", {
+            "user_id": user_id,
+            "listing": listing,
+            "is_watching": on_watchlist.exists(),
+            "offer_declined": offer_declined,
+            "highest_bid": highest_bid,
+            "formset": formset,
+            "comments": comments
+        })
+        
+    else:
+        #print(f"RIGHT NOW {listing.users.all()} FOLLOW(S) ({listing.title}): ")
+        return render(request, "auctions/listing.html", {
+            "user_id": user_id,
+            "listing": listing,
+            "is_watching": on_watchlist.exists(),
+            "highest_bid": highest_bid,
+            "formset": formset,
+            "comments": comments
+        })
 
 def watchlist(request):
 
@@ -204,3 +200,7 @@ def watchlist(request):
         "user": user,
         "watchlist": watchlist_for_user
     })
+
+def categories(request):
+
+    return render(request, "auctions/categories.html")

@@ -33,9 +33,10 @@ class Listing(models.Model):
     url_picture = models.CharField(max_length=500)
     category = models.CharField(max_length=100, choices=CATEGORIES, default=NO_CATEGORY)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
+    active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Title: {self.title} - Price: {self.price} - Description: {self.description} - Date: {self.date_of_post} - Category: {self.category} - Posted by: {self.user_id}"
+        return f"{self.title}"
 
 class Bid(models.Model):
     bid = models.IntegerField()
