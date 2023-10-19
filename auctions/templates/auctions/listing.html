@@ -77,14 +77,16 @@
         <h2>
             <small class="text-muted">Comments</small>
         </h2>    
-        <div class="media">
-            <div class="media-body">
-                {% for comment in comments %}
-                    <h5 class="mt-2">User {{ comment.user }} said:</h5>
-                    {{ comment.comment }}
-                {% endfor %}
+        {% for comment in comments %}
+            <div class="card my-5">
+                <div class="card-header">
+                    {{ comment.user }} said:
+                </div>
+                <div class="card-body">
+                    <p>{{ comment.comment }}</p>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     </div>
     <div class="container">
         {% if user.is_authenticated and listing.active is True %}
