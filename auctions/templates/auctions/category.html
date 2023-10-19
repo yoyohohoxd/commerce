@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <ul>
+        {% for listing in listings %}
+            <li><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></li>
+        {% empty%}
+            <div class="alert alert-dark" role="alert">
+                No listings have been made with this category yet. <a href="{% url 'create_listing' %}">Create one here.</a>
+            </div>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

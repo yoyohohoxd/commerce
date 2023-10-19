@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
@@ -10,28 +11,20 @@ class User(AbstractUser):
 
 class Listing(models.Model):
 
-    NO_CATEGORY = 'NO_CAT'
-    FURNITURE = 'FUR'
-    COMPUTER = 'COM'
-    COMPUTER_ACCESSORIES = 'COM_AS'
-    TOYS = 'TS'
-    GARDEN_UTILITIES = 'GRD_UTIL'
-
-    CATEGORIES = [
-        (NO_CATEGORY, "No category"),
-        (FURNITURE, "Furniture"),
-        (COMPUTER, "Computer"),
-        (COMPUTER_ACCESSORIES, "Computer Accessories"),
-        (TOYS, "Toys"),
-        (GARDEN_UTILITIES, "Garden Utilities"),
-    ]
+    class Categories(models.TextChoices):
+        NO_CATEGORY = "NO_CAT", _("No category")
+        FURNITURE = "FUR", _("Furniture")
+        COMPUTER = "COM", _("Computer")
+        COMPUTER_ACCESSORIES = "COM_AS", _("Computer Accessories")
+        TOYS = "TS", _("Toys")
+        GARDEN_UTILITIES = "GRD_UTIL", _("Garden Utilities")
 
     title = models.CharField(max_length=64)
     description = models.TextField(max_length=1000)
     price = models.IntegerField()
     date_of_post = models.DateTimeField(auto_now_add=True)
     url_picture = models.CharField(max_length=500)
-    category = models.CharField(max_length=100, choices=CATEGORIES, default=NO_CATEGORY)
+    category = models.CharField(max_length=100, choices=Categories.choices, default=Categories.NO_CATEGORY)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     active = models.BooleanField(default=True)
 

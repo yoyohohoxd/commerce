@@ -202,5 +202,15 @@ def watchlist(request):
     })
 
 def categories(request):
+    categories = Listing.Categories.choices
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
 
-    return render(request, "auctions/categories.html")
+def category(request, category):
+
+    l1 = Listing.objects.filter(category=category).order_by('title')
+
+    return render(request, "auctions/category.html", {
+        "listings": l1
+    })

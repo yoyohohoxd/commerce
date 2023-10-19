@@ -2,8 +2,11 @@
 
 {% block body %}
 <div class="container">
+    
     <ul>
-        
+        {% for key, category in categories %}
+            <li><a href="{% url 'category' key %}">{{ category }}</a></li>
+        {% endfor %}
     </ul>
 </div>
 {% endblock %}

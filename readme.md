@@ -20,3 +20,25 @@
 5. ~~Fix everything to do with authetication on the listing page~~
 
 6. Redirect instead of response so the user doesn't get stuck in indefinite look
+
+## Code-snippets that might come in handy
+
+```
+    NO_CATEGORY = 'NO_CAT'
+    FURNITURE = 'FUR'
+    COMPUTER = 'COM'
+    COMPUTER_ACCESSORIES = 'COM_AS'
+    TOYS = 'TS'
+    GARDEN_UTILITIES = 'GRD_UTIL'
+
+    CATEGORIES = [
+        (NO_CATEGORY, "No category"),
+        (FURNITURE, "Furniture"),
+        (COMPUTER, "Computer"),
+        (COMPUTER_ACCESSORIES, "Computer Accessories"),
+        (TOYS, "Toys"),
+        (GARDEN_UTILITIES, "Garden Utilities"),
+    ]
+
+    get_category_display
+```
