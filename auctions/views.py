@@ -141,15 +141,22 @@ def listing(request, listing_id):
             # Get current bid from page and convert to int
             current_bid = int(request.POST["bid"])
 
-            # Bid made must be higher than or equal to the current price and currently highest bid
-            if current_bid >= listing.price and current_bid > highest_bid.bid:
-                Bid.objects.create(bid=current_bid, user=current_user, listing=listing)
+            # Check if there are any current bids
+            if highest_bid is not None:
 
-                # Update highest bid so that the website is updated by next return
-                highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
+                # Bid made must be higher than or equal to the current price and currently highest bid
+                if current_bid >= listing.price and current_bid > highest_bid.bid:
+                    Bid.objects.create(bid=current_bid, user=current_user, listing=listing)
+
+                    # Update highest bid so that the website is updated by next return
+                    highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
+                else:
+                    offer_declined = True # Is there another way to check this?
+                    # Would be cool to turn this into a popup
+            
             else:
-                offer_declined = True # Is there another way to check this?
-                # Would be cool to turn this into a popup
+                Bid.objects.create(bid=current_bid, user=current_user, listing=listing)
+                highest_bid = Bid.objects.filter(listing=listing).order_by('bid').last()
 
         # If user submits a comment
         elif "submit_comment" in request.POST:
